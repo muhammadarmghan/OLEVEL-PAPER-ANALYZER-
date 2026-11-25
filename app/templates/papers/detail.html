@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+{% from "_macros.html" import csrf_form %}
+{% block title %}Paper {{ paper.id }} &middot; {{ paper.variant.component.subject.name }}{% endblock %}
+
+{% block content %}
+{% set c = paper.variant.component %}
+<div class="section-header">
+  <div>
+    <span class="section-tag">{{ c.subject.qualification.board.short_code }} &middot; {{ c.subject.code }}</span>
+    <h1 style="margin: 0;">{{ c.subject.name }} &middot; {{ paper.session.label }}</h1>
+    <p class="section-desc">Paper {{ c.paper_number }}{{ paper.variant.variant_number }} &middot; {{ c.name or c.question_style }} {% if paper.total_marks %}&middot; Total {{ paper.total_marks }} Marks{% endif %}</p>
+  </div>
+  <div style="display: flex; gap: 0.5rem; align-items: center;">
+    {% for f in paper.files %}
+      {% if f.doc_type == 'qp' %}
+        <a class="btn btn-secondary btn-sm" href="{{ url_for('papers.view_pdf', paper_id=paper.id, doc_type='qp') }}" target="_blank">View QP PDF</a>
+        <a class="btn btn-secondary btn-sm" href="{{ url_for('papers.download', paper_id=paper.id, doc_type='qp') }}">Download QP</a>
+      {% elif f.doc_type == 'ms' %}
+        <a class="btn btn-secondary btn-sm" href="{{ url_for('papers.view_pdf', paper_id=paper.id, doc_type='ms') }}" target="_blank">View MS PDF</a>
+        <a class="btn btn-secondary btn-sm" href="{{ url_for('papers.download', paper_id=paper.id, doc_type='ms') }}">Download MS</a>
+      {% endif %}
+    {% endfor %}
+  </div>
+</div>
+
+<!-- Paper Processing Status Banner -->
+<div class="card" style="margin-bottom: 2rem; background: linear-gradient(135deg, #FAF9F4 0%, #F5F4EC 100%);">
+  <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+    <div>
+      <span class="muted" style="font-size: 0.85rem;">Status:</span>
+      <strong id="status" class="badge badge-olive" style="font-size: 0.85rem; margin-left: 0.4rem;">{{ paper.status }}</strong>
+      {% set run = paper.extraction_runs[-1] if paper.extraction_runs else None %}
+      {% if run %}
+        <span class="muted" style="margin-left: 0.8rem; font-size: 0.88rem;">
+          Extraction: <strong>{{ run.status }}</strong> ({{ run.questions_found }} questions segmented)
+        </span>
+      {% endif %}
+    </div>
+
+    {% if g.user and (g.user.has_role('contributor') or g.user.has_role('admin')) %}
+      <div style="display: flex; gap: 0.5rem;">
+        {{ csrf_form(url_for('papers.reprocess', paper_id=paper.id), 'Re-process OCR/Text', 'btn btn-secondary btn-sm') }}
+        {{ csrf_form(url_for('papers.delete', paper_id=paper.id), 'Delete Paper', 'btn btn-outline btn-sm') }}
+      </div>
+    {% endif %}
+  </div>
+
+  {% if run and run.error_message %}
+    <div class="flash flash-warning" style="margin-top: 1rem; margin-bottom: 0;">{{ run.error_message }}</div>
+  {% endif %}
+</div>
+
+<!-- Questions Section -->
+<div class="section-header">
+  <div>
+    <h2 style="margin: 0; font-size: 1.45rem;">Questions in this Paper ({{ questions|length }})</h2>
+    <p class="section-desc">Each question has been segmented and mapped to relevant syllabus topics.</p>
+  </div>
+</div>
+
+<div class="table-wrapper">
+  <table class="table">
+    <thead>
+      <tr>
+        <th style="width: 50px;">#</th>
+        <th>Question Text</th>
+        <th>Topic Link</th>
+        <th>Confidence</th>
+        <th>Review</th>
+        <th style="text-align: right;">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for q in questions %}
+      <tr>
+        <td><strong>Q{{ q.number }}</strong></td>
+        <td>
+          <div style="font-size: 0.95rem; font-weight: 500; margin-bottom: 0.25rem;">
+            {{ q.text|truncate(120) }}
+          </div>
+          {% if q.options %}
+            <div style="display: flex; gap: 0.75rem; font-size: 0.8rem;" class="muted">
+              {% for o in q.options %}
+                <span {% if o.is_correct %}style="font-weight: 700; color: var(--dark-olive);"{% endif %}>
+                  {{ o.label }}. {{ o.text|truncate(25) }}
+                </span>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </td>
+        <td>
+          {% if q.topic_links %}
+            <span class="badge badge-sage" title="{{ q.topic_links[0].topic.title }}">
+              {{ q.topic_links[0].topic.code }} {{ q.topic_links[0].topic.title|truncate(26) }}
+            </span>
+          {% else %}
+            <span class="muted">-</span>
+          {% endif %}
+        </td>
+        <td>
+          {% if q.topic_links %}
+            <div style="font-size: 0.85rem; font-weight: 600;">
+              {{ '%.0f'|format(q.topic_links[0].confidence * 100) }}%
+            </div>
+            <div class="progress-bar-bg" style="width: 60px;">
+              <div class="progress-bar-fill" style="width: {{ '%.0f'|format(q.topic_links[0].confidence * 100) }}%;"></div>
+            </div>
+          {% else %}
+            <span class="muted">-</span>
+          {% endif %}
+        </td>
+        <td>
+          {% if q.review_status == 'approved' %}
+            <span class="badge badge-success">Approved</span>
+          {% elif q.review_status == 'pending' %}
+            <span class="badge badge-warning">Pending</span>
+          {% else %}
+            <span class="badge">{{ q.review_status }}</span>
+          {% endif %}
+        </td>
+        <td style="text-align: right;">
+          <div style="display: flex; gap: 0.35rem; justify-content: flex-end;">
+            {% if g.user %}
+              {{ csrf_form(url_for('study.toggle_bookmark', question_id=q.id), 'Bookmark', 'btn btn-secondary btn-sm') }}
+            {% endif %}
+            {% if g.user and (g.user.has_role('contributor') or g.user.has_role('admin')) %}
+              <a class="btn btn-sm" href="{{ url_for('review.detail', question_id=q.id) }}">Review</a>
+            {% endif %}
+          </div>
+        </td>
+      </tr>
+      {% else %}
+      <tr>
+        <td colspan="6" class="text-center" style="padding: 2.5rem 1rem;">
+          <p class="muted">No questions extracted yet for this paper.</p>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+{% block title %}Past Examination Papers &middot; Archive{% endblock %}
+
+{% block content %}
+<div class="section-header">
+  <div>
+    <span class="section-tag">Past Paper Repository</span>
+    <h1 style="margin: 0; font-size: 2.2rem;">Past Examination Papers</h1>
+    <p class="section-desc">Search, filter, inspect questions, and download original Cambridge O-Level question papers and mark schemes.</p>
+  </div>
+  {% if g.user and (g.user.has_role('contributor') or g.user.has_role('admin')) %}
+    <a class="btn" href="{{ url_for('papers.upload') }}">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+        <polyline points="17 8 12 3 7 8"></polyline>
+        <line x1="12" y1="3" x2="12" y2="15"></line>
+      </svg>
+      Upload New Paper
+    </a>
+  {% endif %}
+</div>
+
+<!-- Interactive Filter Bar -->
+<div class="filter-bar">
+  <form method="get" action="{{ url_for('papers.index') }}">
+    <div class="filter-grid">
+      <!-- Search Input -->
+      <div class="filter-group" style="grid-column: span 2;">
+        <label class="filter-label" for="searchQ">Search Subject / Code</label>
+        <input type="text" id="searchQ" name="q" class="input" placeholder="e.g. Physics, 5054, Chemistry..." value="{{ search_query }}">
+      </div>
+
+      <!-- Exam Board -->
+      <div class="filter-group">
+        <label class="filter-label" for="filterBoard">Exam Board</label>
+        <select id="filterBoard" name="board" class="select">
+          <option value="">All Boards</option>
+          {% for b in boards %}
+            <option value="{{ b.id }}" {% if selected_board == b.id %}selected{% endif %}>{{ b.short_code }} ({{ b.name }})</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- Subject -->
+      <div class="filter-group">
+        <label class="filter-label" for="filterSubject">Subject</label>
+        <select id="filterSubject" name="subject" class="select">
+          <option value="">All Subjects</option>
+          {% for s in subjects %}
+            <option value="{{ s.id }}" {% if selected_subject == s.id %}selected{% endif %}>{{ s.name }} ({{ s.code }})</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- Year -->
+      <div class="filter-group">
+        <label class="filter-label" for="filterYear">Year</label>
+        <select id="filterYear" name="year" class="select">
+          <option value="">All Years</option>
+          {% for y in years %}
+            <option value="{{ y }}" {% if selected_year == y %}selected{% endif %}>{{ y }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- Session -->
+      <div class="filter-group">
+        <label class="filter-label" for="filterSession">Session</label>
+        <select id="filterSession" name="session" class="select">
+          <option value="">All Sessions</option>
+          <option value="s" {% if selected_session == 's' %}selected{% endif %}>May / June (s)</option>
+          <option value="w" {% if selected_session == 'w' %}selected{% endif %}>Oct / Nov (w)</option>
+          <option value="m" {% if selected_session == 'm' %}selected{% endif %}>Feb / Mar (m)</option>
+        </select>
+      </div>
+
+      <!-- Paper Number -->
+      <div class="filter-group">
+        <label class="filter-label" for="filterPaper">Paper No.</label>
+        <select id="filterPaper" name="paper_number" class="select">
+          <option value="">All Papers</option>
+          <option value="1" {% if selected_paper == 1 %}selected{% endif %}>Paper 1 (MCQ)</option>
+          <option value="2" {% if selected_paper == 2 %}selected{% endif %}>Paper 2 (Theory)</option>
+          <option value="3" {% if selected_paper == 3 %}selected{% endif %}>Paper 3 (Practical)</option>
+          <option value="4" {% if selected_paper == 4 %}selected{% endif %}>Paper 4 (Alternative to Practical)</option>
+        </select>
+      </div>
+
+      <!-- Action Buttons -->
+      <div style="display: flex; gap: 0.5rem; align-items: flex-end;">
+        <button type="submit" class="btn" style="flex: 1;">Filter</button>
+        <a href="{{ url_for('papers.index') }}" class="btn btn-secondary" title="Reset Filters">Reset</a>
+      </div>
+    </div>
+  </form>
+</div>
+
+<!-- Results Table -->
+<div class="table-wrapper">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Subject</th>
+        <th>Session & Year</th>
+        <th>Paper / Variant</th>
+        <th>Status</th>
+        <th>Files</th>
+        <th style="text-align: right;">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for p in pagination.items %}
+      <tr>
+        <td>
+          <strong>{{ p.variant.component.subject.name }}</strong>
+          <div class="muted font-mono" style="font-size: 0.8rem;">{{ p.variant.component.subject.code }} &middot; {{ p.session.board.short_code }}</div>
+        </td>
+        <td>
+          <span class="badge badge-sage">{{ p.session.label }}</span>
+        </td>
+        <td>
+          <strong>Paper {{ p.variant.component.paper_number }}{{ p.variant.variant_number }}</strong>
+          <span class="muted" style="font-size: 0.82rem;">({{ p.variant.component.name or p.variant.component.question_style }})</span>
+        </td>
+        <td>
+          {% if p.status == 'ready' or p.status == 'reviewed' %}
+            <span class="badge badge-success">{{ p.status }}</span>
+          {% elif p.status == 'processing' %}
+            <span class="badge badge-warning">{{ p.status }}</span>
+          {% else %}
+            <span class="badge">{{ p.status }}</span>
+          {% endif %}
+        </td>
+        <td>
+          <div style="display: flex; gap: 0.35rem; flex-wrap: wrap;">
+            {% for f in p.files %}
+              {% if f.doc_type == 'qp' %}
+                <a class="badge badge-olive" href="{{ url_for('papers.view_pdf', paper_id=p.id, doc_type='qp') }}" target="_blank" title="View Question Paper">
+                  QP PDF
+                </a>
+                <a class="badge" href="{{ url_for('papers.download', paper_id=p.id, doc_type='qp') }}" title="Download QP">
+                  &darr;
+                </a>
+              {% elif f.doc_type == 'ms' %}
+                <a class="badge badge-sage" href="{{ url_for('papers.view_pdf', paper_id=p.id, doc_type='ms') }}" target="_blank" title="View Mark Scheme">
+                  MS PDF
+                </a>
+                <a class="badge" href="{{ url_for('papers.download', paper_id=p.id, doc_type='ms') }}" title="Download MS">
+                  &darr;
+                </a>
+              {% endif %}
+            {% else %}
+              <span class="muted" style="font-size: 0.8rem;">No attached files</span>
+            {% endfor %}
+          </div>
+        </td>
+        <td style="text-align: right;">
+          <a class="btn btn-sm" href="{{ url_for('papers.detail', paper_id=p.id) }}">
+            Inspect Questions &rarr;
+          </a>
+        </td>
+      </tr>
+      {% else %}
+      <tr>
+        <td colspan="6" class="text-center" style="padding: 2.5rem 1rem;">
+          <p class="muted" style="margin-bottom: 0.5rem; font-size: 1.1rem;">No past papers found matching your criteria.</p>
+          <a class="btn btn-secondary btn-sm" href="{{ url_for('papers.index') }}">Clear all filters</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% from "_macros.html" import pager %}
+{{ pager(pagination, 'papers.index') }}
+{% endblock %}

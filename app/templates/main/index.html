@@ -1,0 +1,217 @@
+{% extends "base.html" %}
+{% block title %}Smart O-Level Past Paper Analysis & Preparation{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero">
+  <div class="hero-pattern"></div>
+  <div class="hero-content">
+    <div class="hero-pill">
+      <span class="hero-pill-dot"></span>
+      <span>Filling the gap left by Rove Papers</span>
+    </div>
+    <h1>Your Smart Companion for O-Level Exam Preparation</h1>
+    <p>
+      Explore past papers, discover important topics, analyse examination trends, and prepare smarter for your O-Level exams with evidence-based syllabus insights.
+    </p>
+    <div class="hero-ctas">
+      <a class="btn btn-lg" href="{{ url_for('papers.index') }}">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        Explore Past Papers
+      </a>
+      <a class="btn btn-secondary btn-lg" href="{{ url_for('analytics.hub') }}">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <line x1="18" y1="20" x2="18" y2="10"></line>
+          <line x1="12" y1="20" x2="12" y2="4"></line>
+          <line x1="6" y1="20" x2="6" y2="14"></line>
+        </svg>
+        Analyse a Paper
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Live Platform Stats -->
+<section style="margin-bottom: 3.5rem;">
+  <div class="stats">
+    {% for label, value in counts.items() %}
+      <div class="stat">
+        <strong>{{ value }}</strong>
+        <span>{{ label }}</span>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+
+<!-- Core Features Section -->
+<section style="margin-bottom: 4rem;">
+  <div class="section-header">
+    <div>
+      <span class="section-tag">Designed for Cambridge Learners</span>
+      <h2 class="section-title">Built for Modern Revision & Higher Grades</h2>
+      <p class="section-desc">Everything an O-Level candidate needs to move from passive reading to focused mastery.</p>
+    </div>
+  </div>
+
+  <div class="grid-3">
+    <!-- Feature 1 -->
+    <div class="feature-card">
+      <div class="feature-icon-wrapper">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+          <line x1="16" y1="13" x2="8" y2="13"></line>
+          <line x1="16" y1="17" x2="8" y2="17"></line>
+          <polyline points="10 9 9 9 8 9"></polyline>
+        </svg>
+      </div>
+      <h3>Past Paper Collection</h3>
+      <p>Clean PDF Question Papers and Mark Schemes organized by examination session, variant, and year for frictionless access.</p>
+    </div>
+
+    <!-- Feature 2 -->
+    <div class="feature-card">
+      <div class="feature-icon-wrapper">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+          <polyline points="2 17 12 22 22 17"></polyline>
+          <polyline points="2 12 12 17 22 12"></polyline>
+        </svg>
+      </div>
+      <h3>Topic-Wise Question Analysis</h3>
+      <p>Every individual question is segmented and tagged to the official syllabus syllabus code with confidence scoring.</p>
+    </div>
+
+    <!-- Feature 3 -->
+    <div class="feature-card">
+      <div class="feature-icon-wrapper">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 20V10M12 20V4M6 20v-6"></path>
+        </svg>
+      </div>
+      <h3>Frequently Asked Topics</h3>
+      <p>Spot recurrence patterns across May/June and Oct/Nov series to focus revision time on the highest-yield chapters.</p>
+    </div>
+
+    <!-- Feature 4 -->
+    <div class="feature-card">
+      <div class="feature-icon-wrapper">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+      </div>
+      <h3>Year-Wise Paper Analysis</h3>
+      <p>Deep dive into session heatmaps and mark distributions over multiple syllabus cycles to see how exam focus evolves.</p>
+    </div>
+
+    <!-- Feature 5 -->
+    <div class="feature-card">
+      <div class="feature-icon-wrapper">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+          <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+          <line x1="12" y1="22.08" x2="12" y2="12"></line>
+        </svg>
+      </div>
+      <h3>AI-Powered Insights</h3>
+      <p>Machine learning classification of question topics and algorithmic study prioritization with model backtesting.</p>
+    </div>
+
+    <!-- Feature 6 -->
+    <div class="feature-card">
+      <div class="feature-icon-wrapper">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+          <polyline points="22 4 12 14.01 9 11.01"></polyline>
+        </svg>
+      </div>
+      <h3>Student Progress Tracking</h3>
+      <p>Create personalized study roadmaps leading up to your exam date and bookmark tricky past paper questions for spaced review.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Subject Quick Access & Recent Papers -->
+<section style="margin-bottom: 2rem;">
+  <div class="section-header">
+    <div>
+      <span class="section-tag">Active Subjects</span>
+      <h2 class="section-title">Jump Straight Into Your Subjects</h2>
+    </div>
+    <a class="btn btn-secondary btn-sm" href="{{ url_for('main.subjects') }}">View All Subjects &rarr;</a>
+  </div>
+
+  <div class="grid">
+    {% for s in subjects %}
+      <div class="card" style="display: flex; flex-direction: column; justify-content: space-between;">
+        <div>
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+            <span class="badge badge-sage">{{ s.code }}</span>
+            <span class="muted" style="font-size: 0.82rem;">{{ s.qualification.board.short_code }} &middot; {{ s.qualification.name }}</span>
+          </div>
+          <h3 style="margin-bottom: 0.5rem; font-size: 1.35rem;">{{ s.name }}</h3>
+          <p class="muted" style="font-size: 0.9rem;">
+            {{ s.components|length }} examination components &middot; {{ s.syllabus_versions|length }} syllabus cycle(s)
+          </p>
+        </div>
+        <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+          <a class="btn btn-sm" href="{{ url_for('analytics.dashboard', subject_id=s.id) }}">Dashboard</a>
+          <a class="btn btn-secondary btn-sm" href="{{ url_for('main.subject_detail', subject_id=s.id) }}">Syllabus</a>
+          <a class="btn btn-secondary btn-sm" href="{{ url_for('analytics.predictions', subject_id=s.id) }}">Predictions</a>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+
+<!-- Recent Papers Showcase -->
+{% if recent_papers %}
+<section style="margin-top: 3.5rem;">
+  <div class="section-header">
+    <div>
+      <span class="section-tag">Recent Papers</span>
+      <h2 class="section-title">Recently Indexed Past Papers</h2>
+    </div>
+    <a class="btn btn-secondary btn-sm" href="{{ url_for('papers.index') }}">Browse Full Archive &rarr;</a>
+  </div>
+
+  <div class="table-wrapper">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Subject</th>
+          <th>Session</th>
+          <th>Paper</th>
+          <th>Status</th>
+          <th style="text-align: right;">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in recent_papers %}
+          <tr>
+            <td><strong>{{ p.variant.component.subject.name }}</strong> ({{ p.variant.component.subject.code }})</td>
+            <td><span class="badge badge-sage">{{ p.session.label }}</span></td>
+            <td>Paper {{ p.variant.component.paper_number }}{{ p.variant.variant_number }}</td>
+            <td>
+              {% if p.status == 'ready' or p.status == 'reviewed' %}
+                <span class="badge badge-success">{{ p.status }}</span>
+              {% else %}
+                <span class="badge badge-warning">{{ p.status }}</span>
+              {% endif %}
+            </td>
+            <td style="text-align: right;">
+              <a class="btn btn-secondary btn-sm" href="{{ url_for('papers.detail', paper_id=p.id) }}">View Questions</a>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endif %}
+
+{% endblock %}

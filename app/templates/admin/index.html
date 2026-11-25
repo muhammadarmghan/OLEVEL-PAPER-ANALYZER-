@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}System Administration &middot; O-Level Analyser{% endblock %}
+
+{% block content %}
+<div class="section-header">
+  <div>
+    <span class="section-tag">Database & Records</span>
+    <h1 style="margin: 0;">System Administration</h1>
+    <p class="section-desc">Direct view and management of relational schema tables and backend entities.</p>
+  </div>
+</div>
+
+<div class="grid">
+  {% for name, n in counts.items() %}
+    <a class="card" href="{{ url_for('admin.list_rows', model_name=name) }}" style="display: flex; justify-content: space-between; align-items: center;">
+      <div>
+        <strong style="font-size: 1.15rem; color: var(--text-primary);">{{ name }}</strong>
+        <div class="muted" style="font-size: 0.85rem; margin-top: 0.2rem;">Entity Model</div>
+      </div>
+      <span class="badge badge-sage" style="font-size: 0.85rem;">{{ n }} rows</span>
+    </a>
+  {% endfor %}
+</div>
+{% endblock %}

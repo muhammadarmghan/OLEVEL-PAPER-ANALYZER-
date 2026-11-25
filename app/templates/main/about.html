@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}About &middot; O-Level Exam Paper Analyser{% endblock %}
+
+{% block content %}
+<div class="hero" style="padding: 2.5rem 2rem; margin-bottom: 2.5rem;">
+  <div class="hero-content">
+    <div class="hero-pill">
+      <span>Dedicated to Student Success</span>
+    </div>
+    <h1 style="font-size: 2.3rem;">Filling the Void Left by Rove Papers</h1>
+    <p>
+      For years, O-Level students counted on platforms like Rove Papers to access past examination papers easily. After its shutdown, students faced scattered PDFs and unstructured archives. 
+      <strong>O-Level Exam Paper Analyser</strong> was created to not only bring back past paper browsing, but to supercharge it with modern data analytics, topic frequency analysis, and automated syllabus intelligence.
+    </p>
+  </div>
+</div>
+
+<div class="grid-3" style="margin-bottom: 3rem;">
+  <div class="card">
+    <h3 style="color: var(--dark-olive);">1. Access All Papers</h3>
+    <p>Search and filter Question Papers and Mark Schemes with 1-click preview and download capabilities directly formatted for desktop and mobile screens.</p>
+  </div>
+  <div class="card">
+    <h3 style="color: var(--dark-olive);">2. Understand Question Trends</h3>
+    <p>Our extraction pipeline categorizes every past exam question against the exact official Cambridge syllabus unit and code, revealing mark distributions.</p>
+  </div>
+  <div class="card">
+    <h3 style="color: var(--dark-olive);">3. Plan Evidence-Based Revision</h3>
+    <p>Target frequently tested areas first. Use backtested prediction insights and customized study roadmaps to prepare efficiently for May/June and Oct/Nov exam series.</p>
+  </div>
+</div>
+
+<div class="card" style="padding: 2rem;">
+  <h2 style="margin-top: 0;">Cambridge Assessment International Education (CAIE) Support</h2>
+  <p>Currently configured with comprehensive syllabuses and past paper analysis for core O-Level qualifications, including:</p>
+  <ul>
+    <li><strong>Physics (5054):</strong> Full unit coverage across Kinematics, Forces, Energy, Thermal, Waves, Electricity, Magnetism, and Nuclear Physics.</li>
+    <li><strong>Chemistry (5070):</strong> States of Matter, Experimental Chemistry, Stoichiometry, Chemical Reactions, Periodicity, Organic Chemistry, and Environmental Chemistry.</li>
+  </ul>
+  <div style="margin-top: 1.5rem;">
+    <a class="btn" href="{{ url_for('papers.index') }}">Start Exploring Papers</a>
+    <a class="btn btn-secondary" href="{{ url_for('main.subjects') }}">Browse All Subjects</a>
+  </div>
+</div>
+{% endblock %}
+

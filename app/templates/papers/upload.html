@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% from "_macros.html" import render_field %}
+{% block title %}Upload Past Paper &middot; Ingestion Pipeline{% endblock %}
+
+{% block content %}
+<div class="narrow" style="margin-top: 1.5rem;">
+  <div class="card" style="padding: 2.25rem 2rem;">
+    <div style="margin-bottom: 1.5rem;">
+      <span class="section-tag">Contributor Pipeline</span>
+      <h1 style="font-size: 1.75rem; margin: 0.2rem 0 0.5rem;">Upload Exam Paper</h1>
+      <p class="muted" style="margin: 0; font-size: 0.9rem;">
+        Upload CAIE Question Paper (QP) and Mark Scheme (MS) PDFs. Our segmentation engine will automatically extract and tag individual questions.
+      </p>
+    </div>
+
+    <form method="post" enctype="multipart/form-data" novalidate>
+      {{ form.hidden_tag() }}
+      {{ render_field(form.qp_file) }}
+      {{ render_field(form.ms_file) }}
+      {{ form.submit(class="btn", style="width: 100%; padding: 0.75rem; font-size: 1rem; margin-top: 0.5rem;") }}
+    </form>
+  </div>
+</div>
+{% endblock %}

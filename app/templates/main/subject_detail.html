@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% from "_macros.html" import csrf_form %}
+{% block title %}{{ subject.name }} ({{ subject.code }}) &middot; Syllabus & Analysis{% endblock %}
+
+{% block content %}
+<div class="section-header">
+  <div>
+    <span class="section-tag">{{ subject.qualification.board.short_code }} &middot; {{ subject.qualification.name }}</span>
+    <h1 style="margin: 0;">{{ subject.name }} <span class="muted font-mono" style="font-size: 1.4rem;">({{ subject.code }})</span></h1>
+    <p class="section-desc">Comprehensive syllabus overview, examination component breakdown, and paper intelligence.</p>
+  </div>
+  <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+    <a class="btn" href="{{ url_for('analytics.dashboard', subject_id=subject.id) }}">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+      Topic Dashboard
+    </a>
+    <a class="btn btn-secondary" href="{{ url_for('analytics.predictions', subject_id=subject.id) }}">Predictions</a>
+    <a class="btn btn-secondary" href="{{ url_for('analytics.backtest', subject_id=subject.id) }}">Backtest</a>
+    <a class="btn btn-outline" href="{{ url_for('papers.index', subject=subject.id) }}">Browse Papers</a>
+  </div>
+</div>
+
+<!-- Examination Components -->
+<div class="card" style="margin-bottom: 2rem;">
+  <h2 style="margin-top: 0; font-size: 1.3rem;">Examination Components</h2>
+  <div class="grid-4" style="margin: 1rem 0 0;">
+    {% for c in subject.components %}
+      <div style="background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1rem;">
+        <span class="badge badge-olive" style="margin-bottom: 0.5rem;">Paper {{ c.paper_number }}</span>
+        <h4 style="margin: 0.35rem 0 0.2rem;">{{ c.name or 'Component ' ~ c.paper_number }}</h4>
+        <div class="muted" style="font-size: 0.85rem;">Format: {{ c.question_style|capitalize }}</div>
+        {% if c.total_marks %}
+          <div class="muted" style="font-size: 0.85rem;">Total: {{ c.total_marks }} Marks</div>
+        {% endif %}
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- Syllabus Units & Topics -->
+<div class="section-header">
+  <div>
+    <h2 style="margin: 0; font-size: 1.45rem;">Official Syllabus Units & Topics</h2>
+    <p class="section-desc">Extracted curriculum structure used to classify every past examination question.</p>
+  </div>
+</div>
+
+<div class="grid">
+{% for unit in units %}
+  <div class="card">
+    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+      <span class="badge badge-sage">Unit {{ unit.number }}</span>
+      <h3 style="margin: 0; font-size: 1.15rem;">{{ unit.title }}</h3>
+    </div>
+    <ul style="padding-left: 1.25rem; margin: 0; color: var(--text-secondary); font-size: 0.92rem; display: flex; flex-direction: column; gap: 0.4rem;">
+      {% for topic in unit.topics|sort(attribute='display_order') %}
+        <li>
+          <strong style="color: var(--dark-olive);">{{ topic.code }}</strong>: {{ topic.title }}
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+{% else %}
+  <div class="card text-center" style="grid-column: 1 / -1; padding: 2.5rem;">
+    <p class="muted">No syllabus topics loaded for this subject yet.</p>
+  </div>
+{% endfor %}
+</div>
+{% endblock %}

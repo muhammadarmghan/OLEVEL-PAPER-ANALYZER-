@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% from "_macros.html" import render_field %}
+{% block title %}Sign In &middot; O-Level Analyser{% endblock %}
+
+{% block content %}
+<div class="narrow" style="margin-top: 2rem;">
+  <div class="card" style="padding: 2.25rem 2rem;">
+    <div style="text-align: center; margin-bottom: 1.75rem;">
+      <div class="brand-icon" style="width: 44px; height: 44px; margin: 0 auto 0.85rem; border-radius: var(--radius-lg);">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+          <polyline points="10 17 15 12 10 7"></polyline>
+          <line x1="15" y1="12" x2="3" y2="12"></line>
+        </svg>
+      </div>
+      <h1 style="font-size: 1.75rem; margin-bottom: 0.35rem;">Welcome Back</h1>
+      <p class="muted" style="font-size: 0.92rem; margin: 0;">Log in to access your study plans and saved question bookmarks.</p>
+    </div>
+
+    <form method="post" novalidate>
+      {{ form.hidden_tag() }}
+      {{ render_field(form.identifier) }}
+      {{ render_field(form.password) }}
+      <label class="check">
+        {{ form.remember() }} 
+        <span>{{ form.remember.label.text }}</span>
+      </label>
+      {{ form.submit(class="btn", style="width: 100%; padding: 0.75rem; font-size: 1rem;") }}
+    </form>
+
+    <div style="text-align: center; margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid var(--border-color); font-size: 0.9rem;">
+      <span class="muted">Don't have an account yet?</span> 
+      <a href="{{ url_for('auth.register') }}" style="font-weight: 600; margin-left: 0.3rem;">Register here</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

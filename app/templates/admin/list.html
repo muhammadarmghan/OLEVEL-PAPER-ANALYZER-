@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% from "_macros.html" import pager, csrf_form %}
+{% block title %}{{ name }}{% endblock %}
+{% block content %}
+<h1>{{ name }}</h1>
+<p><a class="btn" href="{{ url_for('admin.create_row', model_name=name) }}">New record</a> <a href="{{ url_for('admin.index') }}">All tables</a></p>
+<div class="scroll"><table class="table">
+  <tr>{% for c in columns %}<th>{{ c }}</th>{% endfor %}<th></th></tr>
+  {% for row in pagination.items %}
+  <tr>{% for c in columns %}<td>{{ (row|attr(c))|string|truncate(40) }}</td>{% endfor %}
+    <td><a href="{{ url_for('admin.edit_row', model_name=name, pk=pk_of(row)) }}">Edit</a>
+        {{ csrf_form(url_for('admin.delete_row', model_name=name, pk=pk_of(row)), 'Delete') }}</td></tr>
+  {% else %}<tr><td colspan="{{ columns|length + 1 }}" class="muted">No records.</td></tr>{% endfor %}
+</table></div>
+{{ pager(pagination, 'admin.list_rows') }}
+{% endblock %}

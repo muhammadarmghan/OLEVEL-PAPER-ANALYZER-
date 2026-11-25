@@ -1,0 +1,52 @@
+{% from "_macros.html" import csrf_form %}
+<header class="nav-wrapper">
+  <nav class="nav">
+    <a class="brand" href="{{ url_for('main.index') }}">
+      <div class="brand-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+          <path d="M12 6v6"/>
+          <path d="M9 9h6"/>
+        </svg>
+      </div>
+      <span>O-Level <span class="brand-text-accent">Analyser</span></span>
+    </a>
+
+    <div class="nav-links" id="navLinks">
+      <a class="nav-link" href="{{ url_for('main.index') }}">Home</a>
+      <a class="nav-link" href="{{ url_for('papers.index') }}">Past Papers</a>
+      <a class="nav-link" href="{{ url_for('main.subjects') }}">Subjects</a>
+      <a class="nav-link" href="{{ url_for('analytics.hub') }}">Paper Analysis</a>
+      <a class="nav-link" href="{{ url_for('main.about') }}">About</a>
+      {% if g.user and (g.user.has_role('contributor') or g.user.has_role('admin')) %}
+        <a class="nav-link" href="{{ url_for('papers.upload') }}">Upload</a>
+        <a class="nav-link" href="{{ url_for('review.queue') }}">Review</a>
+      {% endif %}
+      {% if g.user %}
+        <a class="nav-link" href="{{ url_for('study.plans') }}">My Plans</a>
+      {% endif %}
+      {% if g.user and g.user.has_role('admin') %}
+        <a class="nav-link" href="{{ url_for('admin.index') }}">Admin</a>
+      {% endif %}
+    </div>
+
+    <div class="nav-auth">
+      {% if g.user %}
+        <span class="badge badge-sage" title="Signed in as {{ g.user.username }}">{{ g.user.username }}</span>
+        {{ csrf_form(url_for('auth.logout'), 'Log out', 'btn btn-secondary btn-sm') }}
+      {% else %}
+        <a class="btn btn-secondary btn-sm" href="{{ url_for('auth.login') }}">Log in</a>
+        <a class="btn btn-sm" href="{{ url_for('auth.register') }}">Register</a>
+      {% endif %}
+
+      <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle navigation menu">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+  </nav>
+</header>

@@ -1,0 +1,74 @@
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="brand" style="font-size: 1.1rem;">
+        <div class="brand-icon" style="width: 28px; height: 28px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+          </svg>
+        </div>
+        <span>O-Level <strong>Analyser</strong></span>
+      </div>
+      <p>The modern past-paper exploration & exam trend intelligence platform for Cambridge O-Level students. Dedicated to filling the gap left by Rove Papers.</p>
+    </div>
+
+    <div class="footer-col">
+      <h4>Platform</h4>
+      <ul>
+        <li><a href="{{ url_for('papers.index') }}">Past Paper Archive</a></li>
+        <li><a href="{{ url_for('main.subjects') }}">Subject Catalog</a></li>
+        <li><a href="{{ url_for('analytics.hub') }}">Exam Trend Analytics</a></li>
+        {% if g.user %}
+          <li><a href="{{ url_for('study.plans') }}">Study Plans & Tracker</a></li>
+        {% endif %}
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>Resources</h4>
+      <ul>
+        <li><a href="{{ url_for('main.about') }}">About O-Level Analyser</a></li>
+        <li><a href="{{ url_for('main.subjects') }}">Cambridge CAIE Syllabuses</a></li>
+        <li><a href="{{ url_for('papers.index') }}">Mark Schemes & QP</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>Account</h4>
+      <ul>
+        {% if g.user %}
+          <li><span class="muted">Signed in as {{ g.user.username }}</span></li>
+          <li><a href="{{ url_for('study.bookmarks') }}">My Bookmarked Questions</a></li>
+        {% else %}
+          <li><a href="{{ url_for('auth.login') }}">Student Sign In</a></li>
+          <li><a href="{{ url_for('auth.register') }}">Create Free Account</a></li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <div>&copy; 2026 O-Level Exam Paper Analyser &middot; Designed for O-Level Students Worldwide</div>
+    <div>Web Engineering (CSE601330) Flask Capstone Project</div>
+  </div>
+</footer>
+
+<script>
+  // Mobile navigation drawer toggle
+  const mobileBtn = document.getElementById('mobileMenuBtn');
+  const navLinks = document.getElementById('navLinks');
+  if (mobileBtn && navLinks) {
+    mobileBtn.addEventListener('click', () => {
+      navLinks.classList.toggle('show');
+    });
+  }
+
+  // Active link highlighter
+  const currentPath = window.location.pathname;
+  document.querySelectorAll('.nav-link').forEach(link => {
+    if (link.getAttribute('href') === currentPath || (currentPath !== '/' && link.getAttribute('href') !== '/' && currentPath.startsWith(link.getAttribute('href')))) {
+      link.classList.add('active');
+    }
+  });
+</script>

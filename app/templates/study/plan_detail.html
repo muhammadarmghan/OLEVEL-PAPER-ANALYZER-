@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% from "_macros.html" import csrf_form %}
+{% block title %}{{ plan.name }} &middot; Plan Details{% endblock %}
+
+{% block content %}
+<div class="section-header">
+  <div>
+    <span class="section-tag">{{ plan.subject.name }} &middot; Exam: {{ plan.exam_date }}</span>
+    <h1 style="margin: 0;">{{ plan.name }}</h1>
+    <p class="section-desc">Study milestones and syllabus completion checklist.</p>
+  </div>
+  <div style="display: flex; gap: 0.5rem;">
+    <a class="btn btn-secondary" href="{{ url_for('study.edit_plan', plan_id=plan.id) }}">Edit Plan</a>
+    {{ csrf_form(url_for('study.delete_plan', plan_id=plan.id), 'Delete Plan', 'btn btn-outline') }}
+    <a class="btn btn-secondary" href="{{ url_for('study.plans') }}">Back to Plans</a>
+  </div>
+</div>
+
+<div class="table-wrapper">
+  <table class="table">
+    <thead>
+      <tr>
+        <th style="width: 130px;">Target Date</th>
+        <th>Syllabus Topic</th>
+        <th style="width: 140px; text-align: right;">Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for i in items %}
+      <tr {% if i.is_done %}style="background: rgba(234, 243, 236, 0.4);"{% endif %}>
+        <td><strong class="font-mono">{{ i.planned_date }}</strong></td>
+        <td>
+          <span class="badge badge-sage">{{ i.topic.code }}</span>
+          <strong style="margin-left: 0.35rem;">{{ i.topic.title }}</strong>
+        </td>
+        <td style="text-align: right;">
+          {{ csrf_form(url_for('study.toggle_item', item_id=i.id), 'Completed' if i.is_done else 'Mark Done', 'btn btn-sm ' ~ ('btn-secondary' if i.is_done else '')) }}
+        </td>
+      </tr>
+      {% else %}
+      <tr>
+        <td colspan="3" class="text-center" style="padding: 2.5rem 1rem;">
+          <p class="muted">No study items generated for this plan.</p>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

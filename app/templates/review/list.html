@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% from "_macros.html" import pager %}
+{% block title %}Question Review Queue{% endblock %}
+
+{% block content %}
+<div class="section-header">
+  <div>
+    <span class="section-tag">Quality Assurance</span>
+    <h1 style="margin: 0;">Review queue</h1>
+    <p class="section-desc">Verify question OCR segmentation accuracy, answer keys, and syllabus topic associations.</p>
+  </div>
+  <span class="badge badge-warning" style="font-size: 0.9rem; padding: 0.35rem 0.85rem;">{{ pagination.total }} Pending Review</span>
+</div>
+
+<div class="table-wrapper">
+  <table class="table">
+    <thead>
+      <tr>
+        <th style="width: 180px;">Session & Paper</th>
+        <th>Extracted Question Text</th>
+        <th style="text-align: right; width: 120px;">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for q in pagination.items %}
+      <tr>
+        <td>
+          <span class="badge badge-sage">{{ q.paper.session.label }}</span>
+          <strong style="margin-left: 0.3rem;">Q{{ q.number }}</strong>
+        </td>
+        <td>
+          <div style="font-weight: 500;">{{ q.text|truncate(120) }}</div>
+        </td>
+        <td style="text-align: right;">
+          <a class="btn btn-sm" href="{{ url_for('review.detail', question_id=q.id) }}">Review Question &rarr;</a>
+        </td>
+      </tr>
+      {% else %}
+      <tr>
+        <td colspan="3" class="text-center" style="padding: 2.5rem 1rem;">
+          <p class="muted">All questions have been reviewed! Nothing currently pending in queue.</p>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{{ pager(pagination, 'review.queue') }}
+{% endblock %}

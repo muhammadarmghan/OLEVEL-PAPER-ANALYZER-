@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Syllabus Subjects &middot; O-Level Analyser{% endblock %}
+
+{% block content %}
+<div class="section-header">
+  <div>
+    <span class="section-tag">Academic Catalog</span>
+    <h1 style="margin: 0;">O-Level Subjects</h1>
+    <p class="section-desc">Select a subject to view detailed syllabus units, examination papers, and topic recurrence intelligence.</p>
+  </div>
+</div>
+
+{% if subjects %}
+  <div class="grid">
+    {% for s in subjects %}
+      <div class="card" style="display: flex; flex-direction: column; justify-content: space-between;">
+        <div>
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+            <span class="badge badge-olive" style="font-size: 0.9rem; padding: 0.25rem 0.75rem;">{{ s.code }}</span>
+            <span class="muted" style="font-size: 0.82rem;">{{ s.qualification.board.short_code }} &middot; {{ s.qualification.name }}</span>
+          </div>
+          <h2 style="margin: 0 0 0.5rem; font-size: 1.45rem;">{{ s.name }}</h2>
+          <p class="muted" style="font-size: 0.9rem; margin-bottom: 1.25rem;">
+            Components: 
+            {% for c in s.components %}
+              Paper {{ c.paper_number }}{% if not loop.last %}, {% endif %}
+            {% else %}
+              None listed
+            {% endfor %}
+          </p>
+        </div>
+
+        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+          <a class="btn btn-sm" href="{{ url_for('analytics.dashboard', subject_id=s.id) }}">Dashboard</a>
+          <a class="btn btn-secondary btn-sm" href="{{ url_for('main.subject_detail', subject_id=s.id) }}">Syllabus Units</a>
+          <a class="btn btn-secondary btn-sm" href="{{ url_for('analytics.predictions', subject_id=s.id) }}">Predictions</a>
+          <a class="btn btn-outline btn-sm" href="{{ url_for('papers.index', subject=s.id) }}">Papers</a>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="card text-center" style="padding: 3rem;">
+    <p class="muted">No subjects loaded yet. Contributor or administrator setup required.</p>
+  </div>
+{% endif %}
+{% endblock %}

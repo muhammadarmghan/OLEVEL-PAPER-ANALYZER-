@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block title %}Study Priority Predictions &middot; {{ subject.name }}{% endblock %}
+
+{% block content %}
+<div class="section-header">
+  <div>
+    <span class="section-tag">{{ subject.name }} &middot; AI Topic Intelligence</span>
+    <h1 style="margin: 0;">{{ subject.name }}: what to study</h1>
+    <p class="section-desc">Algorithmic study priority rankings derived from historical topic frequency, gap analysis, and syllabus weight.</p>
+  </div>
+  <div style="display: flex; gap: 0.5rem;">
+    <a class="btn btn-secondary" href="{{ url_for('analytics.dashboard', subject_id=subject.id) }}">Back to Dashboard</a>
+    <a class="btn btn-secondary" href="{{ url_for('analytics.backtest', subject_id=subject.id) }}">Model Accuracy</a>
+  </div>
+</div>
+
+{% if not run %}
+  <div class="card text-center" style="padding: 3rem 1.5rem;">
+    <h3 style="margin-bottom: 0.5rem;">No predictions generated yet</h3>
+    <p class="muted">A contributor or admin can generate an initial prediction run from the subject dashboard.</p>
+    <a class="btn" href="{{ url_for('analytics.dashboard', subject_id=subject.id) }}">Go to Dashboard</a>
+  </div>
+{% else %}
+  <div class="card" style="margin-bottom: 2rem; background: linear-gradient(135deg, #FAF9F4 0%, #F5F4EC 100%);">
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+      <div>
+        <span class="badge badge-olive">Run #{{ run.id }}</span>
+        <span class="muted" style="margin-left: 0.5rem; font-size: 0.88rem;">Trained through year <strong>{{ run.trained_through_year }}</strong></span>
+      </div>
+      <div class="muted" style="font-size: 0.82rem;">
+        * Notice: Statistical estimates based on historical patterns to optimize revision focus, not exam guarantees.
+      </div>
+    </div>
+  </div>
+
+  <div class="section-header">
+    <div>
+      <h2 style="margin: 0; font-size: 1.35rem;">Ranked Topics by Priority</h2>
+      <p class="section-desc">Click on any topic card to view the underlying algorithmic signals and evidence.</p>
+    </div>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+    {% for p in items %}
+      <details class="card tier-{{ p.tier }}">
+        <summary>
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <div style="width: 28px; height: 28px; border-radius: 50%; background: var(--bg-secondary); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; color: var(--dark-olive);">
+              {{ p.rank }}
+            </div>
+            <strong>{{ p.topic.code }} {{ p.topic.title }}</strong>
+          </div>
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <span class="badge">{{ p.tier|replace('_', ' ')|capitalize }}</span>
+            <span class="muted font-mono" style="font-size: 0.85rem;">Score: {{ '%.2f'|format(p.score) }}</span>
+            <span style="font-size: 0.8rem; color: var(--text-muted);">&darr;</span>
+          </div>
+        </summary>
+
+        <div style="padding-top: 0.75rem;">
+          <h4 style="margin: 0 0 0.5rem; font-size: 0.95rem; color: var(--dark-olive);">Model Explanation & Signals:</h4>
+          <ul style="padding-left: 1.25rem; margin: 0 0 1.25rem; font-size: 0.9rem; color: var(--text-secondary); display: flex; flex-direction: column; gap: 0.35rem;">
+            {% for r in p.reasons %}
+              <li>
+                {{ r.explanation }}
+                <span class="muted font-mono" style="font-size: 0.8rem;">({{ r.signal }}: {{ '%.2f'|format(r.value) }})</span>
+              </li>
+            {% endfor %}
+          </ul>
+
+          {% if g.user %}
+            <div style="border-top: 1px solid var(--border-color); padding-top: 0.75rem;">
+              <form method="post" action="{{ url_for('analytics.feedback', prediction_id=p.id) }}" style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <span style="font-size: 0.85rem; font-weight: 600; color: var(--text-secondary);">Feedback on this prediction:</span>
+                <label style="display: flex; align-items: center; gap: 0.3rem; font-size: 0.85rem;">
+                  Rating (1-5):
+                  <input name="rating" type="number" min="1" max="5" value="5" class="input" style="width: 60px; padding: 0.25rem 0.5rem;">
+                </label>
+                <input name="comment" placeholder="Optional comments on usefulness..." maxlength="255" class="input" style="flex: 1; min-width: 200px; padding: 0.25rem 0.6rem;">
+                <button class="btn btn-sm" type="submit">Submit</button>
+              </form>
+            </div>
+          {% endif %}
+        </div>
+      </details>
+    {% endfor %}
+  </div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% from "_macros.html" import render_field %}
+{% block title %}Review Question {{ question.number }} &middot; Quality Assurance{% endblock %}
+
+{% block content %}
+<div class="section-header">
+  <div>
+    <span class="section-tag">{{ question.paper.session.label }} &middot; Paper {{ question.paper.variant.component.paper_number }}</span>
+    <h1 style="margin: 0;">Review Question {{ question.number }}</h1>
+    <p class="section-desc">Confirm question formatting, correct option markers, and topic taxonomy assignment.</p>
+  </div>
+  <a class="btn btn-secondary" href="{{ url_for('review.queue') }}">Back to Queue</a>
+</div>
+
+{% if question.options %}
+  <div class="card" style="margin-bottom: 1.5rem;">
+    <h3 style="margin-top: 0; font-size: 1.15rem;">Extracted Options & Mark Scheme Answer</h3>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0.75rem; margin-top: 0.75rem;">
+      {% for o in question.options %}
+        <div style="background: var(--bg-primary); padding: 0.75rem 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); {% if o.is_correct %}border-color: var(--dark-olive); background: rgba(234, 243, 236, 0.7);{% endif %}">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <strong style="color: var(--dark-olive); font-size: 1.1rem;">{{ o.label }}</strong>
+            {% if o.is_correct %}<span class="badge badge-success">Correct Key</span>{% endif %}
+          </div>
+          <div style="margin-top: 0.35rem; font-size: 0.92rem;">{{ o.text }}</div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+{% endif %}
+
+<div class="card" style="padding: 2rem;">
+  <form method="post" novalidate>
+    {{ form.hidden_tag() }}
+    {{ render_field(form.text) }}
+    <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 1rem;">
+      {{ render_field(form.marks) }}
+      {{ render_field(form.topic_id) }}
+    </div>
+    <div style="display: flex; gap: 0.75rem; margin-top: 1.25rem;">
+      {{ form.approve(class="btn", style="background: var(--dark-olive);") }}
+      {{ form.reject(class="btn btn-outline", style="border-color: var(--danger-text); color: var(--danger-text);") }}
+    </div>
+  </form>
+</div>
+{% endblock %}

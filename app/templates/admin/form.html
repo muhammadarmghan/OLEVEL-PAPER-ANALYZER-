@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% from "_macros.html" import render_field %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+<h1>{{ name }}: {{ title }}</h1>
+<form method="post" class="card narrow" novalidate>
+  {{ form.hidden_tag() }}
+  {% for field in form if field.widget.input_type != 'hidden' and field.type != 'SubmitField' %}{{ render_field(field) }}{% endfor %}
+  {{ form.submit(class="btn") }} <a href="{{ url_for('admin.list_rows', model_name=name) }}">Cancel</a>
+</form>
+{% endblock %}

@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block title %}{{ subject.name }} Prediction Backtest &middot; O-Level Analyser{% endblock %}
+
+{% block content %}
+<div class="section-header">
+  <div>
+    <span class="section-tag">{{ subject.name }} &middot; Model Evaluation</span>
+    <h1 style="margin: 0;">Historical Prediction Backtest</h1>
+    <p class="section-desc">Empirical validation verifying how well algorithmic predictions would have forecasted past exam papers.</p>
+  </div>
+  <div style="display: flex; gap: 0.5rem;">
+    <a class="btn btn-secondary" href="{{ url_for('analytics.dashboard', subject_id=subject.id) }}">Dashboard</a>
+    <a class="btn btn-secondary" href="{{ url_for('analytics.predictions', subject_id=subject.id) }}">Predictions</a>
+  </div>
+</div>
+
+{% if not rows %}
+  <div class="card text-center" style="padding: 3rem 1.5rem;">
+    <h3 style="margin-bottom: 0.5rem;">No backtest data available</h3>
+    <p class="muted">Generate a prediction run from the subject dashboard first to compute historical backtest scores.</p>
+    <a class="btn" href="{{ url_for('analytics.dashboard', subject_id=subject.id) }}">Go to Dashboard</a>
+  </div>
+{% else %}
+  <!-- Model Summary Stats -->
+  <p>Average hit rate <strong>{{ '%.0f'|format(avg.hit_rate * 100) }}%</strong> vs baseline
+     <strong>{{ '%.0f'|format(avg.baseline_hit_rate * 100) }}%</strong> &middot; mark coverage {{ '%.0f'|format(avg.mark_coverage * 100) }}%.</p>
+  <div class="stats" style="margin-bottom: 2.5rem;">
+    <div class="stat">
+      <strong>{{ '%.0f'|format(avg.hit_rate * 100) }}%</strong>
+      <span>Average hit rate</span>
+    </div>
+    <div class="stat">
+      <strong>{{ '%.0f'|format(avg.baseline_hit_rate * 100) }}%</strong>
+      <span>Baseline Hit Rate</span>
+    </div>
+    <div class="stat">
+      <strong>{{ '%.0f'|format(avg.mark_coverage * 100) }}%</strong>
+      <span>Total Mark Coverage</span>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom: 2rem;">
+    <h3 style="margin-top: 0; font-size: 1.2rem;">Understanding Backtest Metrics</h3>
+    <p class="muted" style="margin-bottom: 0; font-size: 0.92rem;">
+      For each past examination session, the model was trained strictly on data prior to that exam.
+      <strong>Hit Rate</strong> measures whether top-ranked topics actually appeared. 
+      <strong>Baseline</strong> represents expected hits from naive random guessing, showing the statistical edge provided by our frequency engine.
+    </p>
+  </div>
+
+  <div class="table-wrapper">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Predicted Exam Session</th>
+          <th>Top-{{ rows[0].k }} Hit Rate</th>
+          <th>Baseline Benchmark</th>
+          <th>Mark Coverage</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in rows %}
+          <tr>
+            <td><strong>{{ r.target_session.label }}</strong></td>
+            <td>
+              <div style="display: flex; align-items: center; gap: 0.6rem;">
+                <span class="badge badge-success">{{ '%.0f'|format(r.hit_rate * 100) }}%</span>
+                <div class="progress-bar-bg" style="width: 80px; margin: 0;">
+                  <div class="progress-bar-fill" style="width: {{ '%.0f'|format(r.hit_rate * 100) }}%;"></div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <span class="muted font-mono">{{ '%.0f'|format(r.baseline_hit_rate * 100) }}%</span>
+            </td>
+            <td>
+              <span class="badge badge-sage">{{ '%.0f'|format(r.mark_coverage * 100) }}%</span>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endif %}
+{% endblock %}
