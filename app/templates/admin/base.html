@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Panel · O-Level Analyser{% endblock %}
+
+{% block navbar %}{% endblock %}
+
+{% block content %}
+<div class="admin-layout">
+  <aside class="admin-sidebar">
+    <nav class="admin-nav">
+      <a href="{{ url_for('admin.index') }}" class="nav-link{% if request.endpoint == 'admin.index' %} active{% endif %}">
+        <svg width="20" height="20" fill="currentColor" class="icon mr-2"><use href="#icon-dashboard"/></svg>
+        Dashboard
+      </a>
+      {% if counts %}
+        {% for name, n in counts.items() %}
+        <a href="{{ url_for('admin.list_rows', model_name=name) }}" class="nav-link{% if request.endpoint == 'admin.list_rows' and request.view_args.model_name == name %} active{% endif %}">
+          <svg width="20" height="20" fill="currentColor" class="icon mr-2"><use href="#icon-table"/></svg>
+          {{ name }}
+        </a>
+        {% endfor %}
+      {% endif %}
+    </nav>
+  </aside>
+  <main class="admin-main">
+    {% block admin_content %}{% endblock %}
+  </main>
+</div>
+{% endblock %}
