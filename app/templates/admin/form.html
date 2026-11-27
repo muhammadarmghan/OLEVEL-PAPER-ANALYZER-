@@ -1,11 +1,27 @@
 {% extends "admin/base.html" %}
 {% from "_macros.html" import render_field %}
-{% block title %}{{ title }}{% endblock %}
-{% block content %}
-<h1>{{ name }}: {{ title }}</h1>
-<form method="post" class="card narrow" novalidate>
-  {{ form.hidden_tag() }}
-  {% for field in form if field.widget.input_type != 'hidden' and field.type != 'SubmitField' %}{{ render_field(field) }}{% endfor %}
-  {{ form.submit(class="btn") }} <a href="{{ url_for('admin.list_rows', model_name=name) }}">Cancel</a>
-</form>
+{% block title %}{{ title }} · Admin{% endblock %}
+{% block topbar_title %}{{ name | replace('_',' ') | title }} — {{ title }}{% endblock %}
+
+{% block admin_content %}
+<div class="adm-page-header">
+  <div>
+    <h1 class="adm-page-title">{{ name | replace('_',' ') | title }}</h1>
+    <p class="adm-page-desc">{{ title }}</p>
+  </div>
+  <a href="{{ url_for('admin.list_rows', model_name=name) }}" class="adm-btn adm-btn-outline">← Back to list</a>
+</div>
+
+<div class="adm-form-card">
+  <form method="post" novalidate>
+    {{ form.hidden_tag() }}
+    {% for field in form if field.widget.input_type != 'hidden' and field.type != 'SubmitField' %}
+    {{ render_field(field) }}
+    {% endfor %}
+    <div class="adm-form-actions">
+      {{ form.submit(class="adm-btn") }}
+      <a href="{{ url_for('admin.list_rows', model_name=name) }}" class="adm-btn adm-btn-ghost">Cancel</a>
+    </div>
+  </form>
+</div>
 {% endblock %}

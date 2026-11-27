@@ -1,24 +1,68 @@
 {% extends "admin/base.html" %}
-{% block title %}System Administration &middot; O-Level Analyser{% endblock %}
+{% block title %}Dashboard · Admin{% endblock %}
+{% block topbar_title %}Dashboard{% endblock %}
 
 {% block admin_content %}
-<div class="section-header">
+<!-- Page header -->
+<div class="adm-page-header">
   <div>
-    <span class="section-tag">Database & Records</span>
-    <h1 style="margin: 0;">System Administration</h1>
-    <p class="section-desc">Direct view and management of relational schema tables and backend entities.</p>
+    <h1 class="adm-page-title">System Dashboard</h1>
+    <p class="adm-page-desc">Overview of all database tables and system entities.</p>
   </div>
 </div>
 
-<div class="grid">
+<!-- Stat cards -->
+<div class="adm-stats-grid">
   {% for name, n in counts.items() %}
-    <a class="card" href="{{ url_for('admin.list_rows', model_name=name) }}" style="display: flex; justify-content: space-between; align-items: center;">
-      <div>
-        <strong style="font-size: 1.15rem; color: var(--text-primary);">{{ name }}</strong>
-        <div class="muted" style="font-size: 0.85rem; margin-top: 0.2rem;">Entity Model</div>
-      </div>
-      <span class="badge badge-sage" style="font-size: 0.85rem;">{{ n }} rows</span>
-    </a>
+  <a href="{{ url_for('admin.list_rows', model_name=name) }}" class="adm-stat-card">
+    <div class="adm-stat-icon">
+      <svg width="22" height="22"><use href="#ico-table"/></svg>
+    </div>
+    <div class="adm-stat-body">
+      <div class="adm-stat-value">{{ n }}</div>
+      <div class="adm-stat-label">{{ name | replace('_', ' ') | title }}</div>
+    </div>
+    <div class="adm-stat-arrow">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+      </svg>
+    </div>
+  </a>
   {% endfor %}
+</div>
+
+<!-- Tables quick-access -->
+<div class="adm-section-title" style="margin-top:2.5rem;">Quick Access — All Tables</div>
+<div class="adm-table-wrap">
+  <table class="adm-table">
+    <thead>
+      <tr>
+        <th>Table / Model</th>
+        <th>Rows</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for name, n in counts.items() %}
+      <tr>
+        <td>
+          <div style="display:flex;align-items:center;gap:0.6rem;">
+            <div class="adm-table-icon"><svg width="15" height="15"><use href="#ico-table"/></svg></div>
+            <strong>{{ name | replace('_', ' ') | title }}</strong>
+          </div>
+        </td>
+        <td><span class="adm-pill">{{ n }} rows</span></td>
+        <td>
+          <div style="display:flex;gap:0.5rem;">
+            <a href="{{ url_for('admin.list_rows', model_name=name) }}" class="adm-btn adm-btn-sm">View</a>
+            <a href="{{ url_for('admin.create_row', model_name=name) }}" class="adm-btn adm-btn-sm adm-btn-outline">
+              <svg width="12" height="12"><use href="#ico-plus"/></svg> New
+            </a>
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 </div>
 {% endblock %}
